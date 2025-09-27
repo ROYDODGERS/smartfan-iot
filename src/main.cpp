@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <WiFi.h>     // Para ESP32
+#include <WiFi.h>     
 #include "config.h"
 
 
@@ -31,7 +31,7 @@ void setup() {
 }
 
 void loop() {
-  // Aquí puedes agregar futuras funciones, por ejemplo:
+ 
   // Lectura del sensor, control del ventilador, etc.
   delay(1000);
 }
