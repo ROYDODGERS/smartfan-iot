@@ -1,3 +1,5 @@
+//integrantes de equipo :
+//joanna martinez 
 #include <Arduino.h>
 #include <WiFi.h>     
 #include "config.h"
