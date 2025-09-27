@@ -1,3 +1,5 @@
+//integrantes equipo :
+// Juan Pablo Luna Sotero
 #include <Arduino.h>
 #include <WiFi.h>     
 #include "config.h"
