@@ -1,37 +1,39 @@
 #include <Arduino.h>
-#include <WiFi.h>     
-#include "config.h"
+#include <Wire.h>
+#include "soc/soc.h"
+#include "soc/rtc_cntl_reg.h"
+#include <MAX30100.h>
 
-
-const char* WIFI_SSID = "RI-UAEMex";
-const char* WIFI_PASSWORD = "";
-
+MAX30100 sensor;
 
 void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // Desactiva brownout
   Serial.begin(115200);
   delay(1000);
+  Serial.println("Iniciando MAX30100...");
 
-  Serial.println("\n🔌 Iniciando conexión WiFi...");
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Wire.begin(21, 22); // Pines I2C del ESP32
 
-  int intentos = 0;
-  while (WiFi.status() != WL_CONNECTED && intentos < 20) {
-    delay(500);
-    Serial.print(".");
-    intentos++;
-  }
+  sensor.begin();
+  sensor.setMode(MAX30100_MODE_SPO2_HR);
+  sensor.setLedsCurrent(MAX30100_LED_CURR_24MA, MAX30100_LED_CURR_24MA);
+  sensor.setLedsPulseWidth(MAX30100_SPC_PW_1600US_16BITS);
+  sensor.setSamplingRate(MAX30100_SAMPRATE_100HZ);
+  sensor.setHighresModeEnabled(true);
 
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("\n✅ Conectado exitosamente a la red WiFi!");
-    Serial.print("📡 Dirección IP: ");
-    Serial.println(WiFi.localIP());
-  } else {
-    Serial.println("\n❌ No se pudo conectar a la red WiFi. Revisa tus credenciales.");
-  }
+  Serial.println("Sensor inicializado correctamente.");
 }
 
 void loop() {
- 
-  // Lectura del sensor, control del ventilador, etc.
+  sensor.update();
+
+  uint16_t ir, red;
+  sensor.getRawValues(&ir, &red);
+
+  Serial.print("IR: ");
+  Serial.print(ir);
+  Serial.print(" | RED: ");
+  Serial.println(red);
+
   delay(1000);
 }
